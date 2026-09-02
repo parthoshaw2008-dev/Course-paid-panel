@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Smart Tech</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Poppins', 'sans-serif'], },
+                    colors: { brandBlue: '#0f4c81', brandGold: '#f59e0b', adminDark: '#0f172a' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f1f5f9; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="min-h-screen flex bg-gray-100">
+
+    <!-- ADMIN SIDEBAR -->
+    <aside class="w-64 bg-adminDark text-white flex flex-col shadow-2xl hidden md:flex h-screen sticky top-0">
+        <div class="p-6 flex items-center gap-3 border-b border-gray-800">
+            <div class="w-10 h-10 bg-brandGold rounded-lg flex items-center justify-center text-adminDark font-black text-xl">
+                ST
+            </div>
+            <div>
+                <h1 class="font-bold text-lg leading-tight tracking-tight">Admin Panel</h1>
+                <p class="text-[10px] text-gray-400 uppercase tracking-widest">Smart Tech</p>
+            </div>
+        </div>
+        
+        <nav class="flex-1 p-4 space-y-2">
+            <button onclick="switchTab('manage-access')" id="btn-manage-access" class="w-full flex items-center gap-3 px-4 py-3 bg-brandBlue text-white rounded-xl font-medium transition text-sm">
+                <i class="fa-solid fa-key w-5"></i> Manage Access (Lock/Unlock)
+            </button>
+            <button onclick="switchTab('add-course')" id="btn-add-course" class="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl font-medium transition text-sm">
+                <i class="fa-solid fa-square-plus w-5"></i> Add New Course
+            </button>
+        </nav>
+
+        <div class="p-4 border-t border-gray-800">
+            <button id="admin-logout-btn" class="w-full flex items-center justify-center gap-2 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white py-3 rounded-xl font-bold transition text-sm">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Secure Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- MOBILE HEADER (Visible only on small screens) -->
+    <div class="md:hidden fixed top-0 left-0 w-full bg-adminDark text-white p-4 flex justify-between items-center z-50 shadow-md">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-brandGold rounded-md flex items-center justify-center text-adminDark font-black text-sm">ST</div>
+            <h1 class="font-bold text-base">Admin Panel</h1>
+        </div>
+        <button id="admin-logout-mobile" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-power-off text-xl"></i></button>
+    </div>
+
+    <!-- MOBILE TABS -->
+    <div class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 flex z-50">
+        <button onclick="switchTab('manage-access')" id="mob-btn-manage-access" class="w-1/2 py-3 text-brandBlue border-t-2 border-brandBlue font-bold text-xs"><i class="fa-solid fa-key mb-1 block text-lg"></i> Access</button>
+        <button onclick="switchTab('add-course')" id="mob-btn-add-course" class="w-1/2 py-3 text-gray-500 border-t-2 border-transparent font-medium text-xs"><i class="fa-solid fa-square-plus mb-1 block text-lg"></i> Add Course</button>
+    </div>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 p-6 md:p-10 pt-20 md:pt-10 pb-24 md:pb-10 overflow-y-auto w-full">
+        
+        <!-- Custom Alert Box -->
+        <div id="admin-alert" class="hidden mb-6 p-4 rounded-xl font-bold flex items-center gap-3 transition-all shadow-sm">
+            <i id="admin-alert-icon" class="fa-solid fa-circle-check text-xl"></i>
+            <span id="admin-alert-msg">Message goes here</span>
+        </div>
+
+        <!-- TAB 1: MANAGE ACCESS (UNLOCK/LOCK COURSES) -->
+        <section id="manage-access" class="tab-content active max-w-2xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 md:p-8">
+                <div class="mb-6 border-b border-gray-100 pb-4">
+                    <h2 class="text-2xl font-bold text-gray-800"><i class="fa-solid fa-unlock-keyhole text-brandGold mr-2"></i> Unlock Course for Student</h2>
+                    <p class="text-xs text-gray-500 mt-1">Provide access to a student after verifying their payment.</p>
+                </div>
+
+                <form id="access-form" class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Student's Registered Email</label>
+                        <input type="email" id="student-email" required class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl focus:border-brandBlue focus:ring-1 focus:ring-brandBlue outline-none p-3.5" placeholder="student@gmail.com">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Select Course to Modify Access</label>
+                        <select id="course-select" required class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl focus:border-brandBlue focus:ring-1 focus:ring-brandBlue outline-none p-3.5 appearance-none">
+                            <option value="">Loading courses...</option>
+                        </select>
+                    </div>
+
+                    <div class="flex gap-3 pt-4">
+                        <button type="submit" id="btn-unlock" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3.5 rounded-xl shadow-md transition flex justify-center items-center gap-2">
+                            <i class="fa-solid fa-unlock"></i> Grant Access (Unlock)
+                        </button>
+                        <button type="button" id="btn-lock" class="flex-1 bg-red-50 border border-red-200 text-red-600 hover:bg-red-500 hover:text-white font-bold py-3.5 rounded-xl transition flex justify-center items-center gap-2">
+                            <i class="fa-solid fa-lock"></i> Revoke Access (Lock)
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- TAB 2: ADD NEW COURSE -->
+        <section id="add-course" class="tab-content max-w-3xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 md:p-8">
+                <div class="mb-6 border-b border-gray-100 pb-4">
+                    <h2 class="text-2xl font-bold text-gray-800"><i class="fa-solid fa-folder-plus text-brandBlue mr-2"></i> Create New Course</h2>
+                    <p class="text-xs text-gray-500 mt-1">Publish a new course to the database. It will be locked by default for all students.</p>
+                </div>
+
+                <form id="add-course-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Course Title</label>
+                            <input type="text" id="course-title" required class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl p-3.5 outline-none focus:border-brandBlue" placeholder="e.g. Advanced Tally Prime with GST">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Course Price (₹)</label>
+                            <input type="number" id="course-price" required class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl p-3.5 outline-none focus:border-brandBlue" placeholder="e.g. 2999">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Thumbnail Image URL</label>
+                            <input type="url" id="course-thumb" required class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl p-3.5 outline-none focus:border-brandBlue" placeholder="https://image-link.jpg">
+                        </div>
+                    </div>
+
+                    <div class="border-t border-gray-200 pt-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide">Video Lectures Syllabus</label>
+                            <button type="button" onclick="addVideoField()" class="bg-blue-50 text-brandBlue font-bold text-xs px-3 py-1.5 rounded hover:bg-blue-100 transition"><i class="fa-solid fa-plus mr-1"></i> Add Video Row</button>
+                        </div>
+                        
+                        <div id="video-fields-container" class="space-y-3">
+                            <!-- Video Row 1 -->
+                            <div class="video-row flex flex-col md:flex-row gap-3 bg-gray-50 p-3 rounded-xl border border-gray-200 relative">
+                                <input type="text" placeholder="Video Title (e.g. Class 1: Basics)" required class="vid-title flex-1 bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none focus:border-brandBlue">
+                                <input type="url" placeholder="Video URL (Cloudinary/Drive link)" required class="vid-url flex-1 bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none focus:border-brandBlue">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="submit" id="btn-submit-course" class="w-full bg-brandBlue hover:bg-blue-800 text-white font-bold py-4 rounded-xl shadow-lg transition flex justify-center items-center gap-2">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Publish Course to Database
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- UI TAB SWITCHING LOGIC -->
+    <script>
+        function switchTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+
+            // Reset Desktop Sidebar Styles
+            document.getElementById('btn-manage-access').className = "w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl font-medium transition text-sm";
+            document.getElementById('btn-add-course').className = "w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl font-medium transition text-sm";
+            
+            // Reset Mobile Bottom Nav Styles
+            document.getElementById('mob-btn-manage-access').className = "w-1/2 py-3 text-gray-500 border-t-2 border-transparent font-medium text-xs";
+            document.getElementById('mob-btn-add-course').className = "w-1/2 py-3 text-gray-500 border-t-2 border-transparent font-medium text-xs";
+
+            // Set Active Styles
+            if(tabId === 'manage-access') {
+                document.getElementById('btn-manage-access').className = "w-full flex items-center gap-3 px-4 py-3 bg-brandBlue text-white rounded-xl font-medium transition text-sm";
+                document.getElementById('mob-btn-manage-access').className = "w-1/2 py-3 text-brandBlue border-t-2 border-brandBlue font-bold text-xs";
+            } else {
+                document.getElementById('btn-add-course').className = "w-full flex items-center gap-3 px-4 py-3 bg-brandBlue text-white rounded-xl font-medium transition text-sm";
+                document.getElementById('mob-btn-add-course').className = "w-1/2 py-3 text-brandBlue border-t-2 border-brandBlue font-bold text-xs";
+            }
+        }
+
+        function addVideoField() {
+            const container = document.getElementById('video-fields-container');
+            const rowCount = container.children.length + 1;
+            const div = document.createElement('div');
+            div.className = "video-row flex flex-col md:flex-row gap-3 bg-gray-50 p-3 rounded-xl border border-gray-200 relative";
+            div.innerHTML = `
+                <input type="text" placeholder="Video Title (e.g. Class ${rowCount})" required class="vid-title flex-1 bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none focus:border-brandBlue">
+                <input type="url" placeholder="Video URL (Cloudinary/Drive link)" required class="vid-url flex-1 bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none focus:border-brandBlue">
+                <button type="button" onclick="this.parentElement.remove()" class="absolute -right-2 -top-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 text-xs shadow"><i class="fa-solid fa-xmark"></i></button>
+            `;
+            container.appendChild(div);
+        }
+
+        function showAlert(msg, isSuccess) {
+            const alertBox = document.getElementById('admin-alert');
+            const alertMsg = document.getElementById('admin-alert-msg');
+            const alertIcon = document.getElementById('admin-alert-icon');
+            
+            alertBox.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+            
+            if(isSuccess) {
+                alertBox.classList.add('bg-green-100', 'text-green-800');
+                alertIcon.className = "fa-solid fa-circle-check text-xl";
+            } else {
+                alertBox.classList.add('bg-red-100', 'text-red-800');
+                alertIcon.className = "fa-solid fa-triangle-exclamation text-xl";
+            }
+            
+            alertMsg.innerText = msg;
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => { alertBox.classList.add('hidden'); }, 5000);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+
+    <!-- FIREBASE ADMIN LOGIC (v10.8.1) -->
+    <script type="module">
+        import { app, auth } from './firebase-config.js';
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, addDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        
+        const db = getFirestore(app);
+
+        // Security Check: Redirect if not logged in
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                alert("Unauthorized Access. Redirecting to Login...");
+                window.location.href = "login.html";
+            }
+        });
+
+        // Logout
+        const handleLogout = () => {
+            signOut(auth).then(() => { window.location.href = "login.html"; });
+        };
+        document.getElementById('admin-logout-btn').addEventListener('click', handleLogout);
+        document.getElementById('admin-logout-mobile').addEventListener('click', handleLogout);
+
+        // ==========================================
+        // FEATURE 1: LOAD COURSES INTO DROPDOWN
+        // ==========================================
+        async function loadCourseDropdown() {
+            const select = document.getElementById('course-select');
+            select.innerHTML = '<option value="">Loading courses...</option>';
+            try {
+                const querySnapshot = await getDocs(collection(db, "courses"));
+                if(querySnapshot.empty) {
+                    select.innerHTML = '<option value="">No courses available in DB</option>';
+                    return;
+                }
+                
+                select.innerHTML = '<option value="" disabled selected>-- Select a Course --</option>';
+                querySnapshot.forEach((docSnap) => {
+                    const course = docSnap.data();
+                    const opt = document.createElement('option');
+                    opt.value = docSnap.id;
+                    opt.textContent = `${course.title} (ID: ${docSnap.id})`;
+                    select.appendChild(opt);
+                });
+            } catch(e) {
+                console.error("Error loading courses:", e);
+                select.innerHTML = '<option value="">Error connecting to DB</option>';
+            }
+        }
+        
+        // Load dropdown on startup
+        loadCourseDropdown();
+
+        // ==========================================
+        // FEATURE 2: MANAGE ACCESS (UNLOCK / LOCK)
+        // ==========================================
+        
+        // UNLOCK COURSE
+        document.getElementById('access-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-unlock');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+            
+            const email = document.getElementById('student-email').value.toLowerCase().trim();
+            const courseId = document.getElementById('course-select').value;
+
+            if(!courseId) {
+                showAlert("Please select a valid course.", false);
+                btn.innerHTML = '<i class="fa-solid fa-unlock"></i> Grant Access (Unlock)';
+                return;
+            }
+
+            try {
+                // The exact path index.html and my-courses.html are looking for: "unlocked_courses/{email}"
+                const emailRef = doc(db, "unlocked_courses", email);
+                // merge: true ensures we don't overwrite other courses this student has bought
+                await setDoc(emailRef, { [courseId]: true }, { merge: true });
+                
+                showAlert(`Success! Course unlocked for student: ${email}`, true);
+                document.getElementById('student-email').value = '';
+                document.getElementById('course-select').selectedIndex = 0;
+            } catch(error) {
+                console.error(error);
+                showAlert(`Error: ${error.message}`, false);
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-unlock"></i> Grant Access (Unlock)';
+            }
+        });
+
+        // LOCK COURSE
+        document.getElementById('btn-lock').addEventListener('click', async () => {
+            const btn = document.getElementById('btn-lock');
+            const email = document.getElementById('student-email').value.toLowerCase().trim();
+            const courseId = document.getElementById('course-select').value;
+
+            if(!email || !courseId) {
+                showAlert("Enter email and select a course to revoke access.", false);
+                return;
+            }
+
+            const confirmLock = confirm(`Are you sure you want to LOCK this course for ${email}?`);
+            if(!confirmLock) return;
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Locking...';
+
+            try {
+                const emailRef = doc(db, "unlocked_courses", email);
+                // Setting it to false restricts access in index.html and my-courses.html
+                await setDoc(emailRef, { [courseId]: false }, { merge: true });
+                
+                showAlert(`Course successfully LOCKED for student: ${email}`, true);
+                document.getElementById('student-email').value = '';
+                document.getElementById('course-select').selectedIndex = 0;
+            } catch(error) {
+                console.error(error);
+                showAlert(`Error: ${error.message}`, false);
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-lock"></i> Revoke Access (Lock)';
+            }
+        });
+
+
+        // ==========================================
+        // FEATURE 3: ADD NEW COURSE
+        // ==========================================
+        document.getElementById('add-course-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit-course');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Publishing...';
+
+            const title = document.getElementById('course-title').value;
+            const price = document.getElementById('course-price').value;
+            const thumb = document.getElementById('course-thumb').value;
+
+            // Extract all videos from dynamic fields
+            const videos = [];
+            const rows = document.querySelectorAll('.video-row');
+            rows.forEach(row => {
+                const vTitle = row.querySelector('.vid-title').value;
+                const vUrl = row.querySelector('.vid-url').value;
+                if(vTitle && vUrl) {
+                    videos.push({ title: vTitle, url: vUrl });
+                }
+            });
+
+            const courseData = {
+                title: title,
+                price: parseInt(price),
+                thumb: thumb,
+                videos: videos,
+                createdAt: new Date().toISOString()
+            };
+
+            try {
+                // Add to 'courses' collection
+                const docRef = await addDoc(collection(db, "courses"), courseData);
+                showAlert(`Course Published Successfully! ID: ${docRef.id}`, true);
+                
+                // Reset form
+                document.getElementById('add-course-form').reset();
+                document.getElementById('video-fields-container').innerHTML = `
+                    <div class="video-row flex flex-col md:flex-row gap-3 bg-gray-50 p-3 rounded-xl border border-gray-200 relative">
+                        <input type="text" placeholder="Video Title (e.g. Class 1: Basics)" required class="vid-title flex-1 bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none focus:border-brandBlue">
+                        <input type="url" placeholder="Video URL (Cloudinary/Drive link)" required class="vid-url flex-1 bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none focus:border-brandBlue">
+                    </div>
+                `;
+                
+                // Reload course dropdown to include the newly added course
+                loadCourseDropdown();
+
+            } catch (error) {
+                console.error("Error adding course: ", error);
+                showAlert(`Failed to publish course: ${error.message}`, false);
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Publish Course to Database';
+            }
+        });
+
+    </script>
+</body>
+</html>
