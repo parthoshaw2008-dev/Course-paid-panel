@@ -31,12 +31,10 @@
 </head>
 <body class="min-h-screen flex bg-gray-100">
 
-    <!-- ADMIN SIDEBAR -->
+    <!-- ADMIN SIDEBAR (Desktop) -->
     <aside class="w-64 bg-adminDark text-white flex flex-col shadow-2xl hidden md:flex h-screen sticky top-0">
         <div class="p-6 flex items-center gap-3 border-b border-gray-800">
-            <div class="w-10 h-10 bg-brandGold rounded-lg flex items-center justify-center text-adminDark font-black text-xl">
-                ST
-            </div>
+            <div class="w-10 h-10 bg-brandGold rounded-lg flex items-center justify-center text-adminDark font-black text-xl">ST</div>
             <div>
                 <h1 class="font-bold text-lg leading-tight tracking-tight">Admin Panel</h1>
                 <p class="text-[10px] text-gray-400 uppercase tracking-widest">Smart Tech</p>
@@ -45,10 +43,13 @@
         
         <nav class="flex-1 p-4 space-y-2">
             <button onclick="switchTab('manage-access')" id="btn-manage-access" class="w-full flex items-center gap-3 px-4 py-3 bg-brandBlue text-white rounded-xl font-medium transition text-sm">
-                <i class="fa-solid fa-key w-5"></i> Manage Access (Lock/Unlock)
+                <i class="fa-solid fa-key w-5"></i> Course Access
             </button>
             <button onclick="switchTab('add-course')" id="btn-add-course" class="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl font-medium transition text-sm">
-                <i class="fa-solid fa-square-plus w-5"></i> Add New Course
+                <i class="fa-solid fa-square-plus w-5"></i> Add Course
+            </button>
+            <button onclick="switchTab('manage-centre')" id="btn-manage-centre" class="w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl font-medium transition text-sm">
+                <i class="fa-solid fa-building w-5"></i> Offline Centre
             </button>
         </nav>
 
@@ -59,7 +60,7 @@
         </div>
     </aside>
 
-    <!-- MOBILE HEADER (Visible only on small screens) -->
+    <!-- MOBILE HEADER -->
     <div class="md:hidden fixed top-0 left-0 w-full bg-adminDark text-white p-4 flex justify-between items-center z-50 shadow-md">
         <div class="flex items-center gap-2">
             <div class="w-8 h-8 bg-brandGold rounded-md flex items-center justify-center text-adminDark font-black text-sm">ST</div>
@@ -69,9 +70,10 @@
     </div>
 
     <!-- MOBILE TABS -->
-    <div class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 flex z-50">
-        <button onclick="switchTab('manage-access')" id="mob-btn-manage-access" class="w-1/2 py-3 text-brandBlue border-t-2 border-brandBlue font-bold text-xs"><i class="fa-solid fa-key mb-1 block text-lg"></i> Access</button>
-        <button onclick="switchTab('add-course')" id="mob-btn-add-course" class="w-1/2 py-3 text-gray-500 border-t-2 border-transparent font-medium text-xs"><i class="fa-solid fa-square-plus mb-1 block text-lg"></i> Add Course</button>
+    <div class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 grid grid-cols-3 z-50">
+        <button onclick="switchTab('manage-access')" id="mob-btn-manage-access" class="py-3 text-brandBlue border-t-2 border-brandBlue font-bold text-[10px]"><i class="fa-solid fa-key mb-1 block text-base"></i> Access</button>
+        <button onclick="switchTab('add-course')" id="mob-btn-add-course" class="py-3 text-gray-500 border-t-2 border-transparent font-medium text-[10px]"><i class="fa-solid fa-square-plus mb-1 block text-base"></i> Courses</button>
+        <button onclick="switchTab('manage-centre')" id="mob-btn-manage-centre" class="py-3 text-gray-500 border-t-2 border-transparent font-medium text-[10px]"><i class="fa-solid fa-building mb-1 block text-base"></i> Centre</button>
     </div>
 
     <!-- MAIN CONTENT AREA -->
@@ -83,7 +85,7 @@
             <span id="admin-alert-msg">Message goes here</span>
         </div>
 
-        <!-- TAB 1: MANAGE ACCESS (UNLOCK/LOCK COURSES) -->
+        <!-- TAB 1: MANAGE ACCESS -->
         <section id="manage-access" class="tab-content active max-w-2xl mx-auto">
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 md:p-8">
                 <div class="mb-6 border-b border-gray-100 pb-4">
@@ -94,22 +96,22 @@
                 <form id="access-form" class="space-y-5">
                     <div>
                         <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Student's Registered Email</label>
-                        <input type="email" id="student-email" required class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl focus:border-brandBlue focus:ring-1 focus:ring-brandBlue outline-none p-3.5" placeholder="student@gmail.com">
+                        <input type="email" id="student-email" required class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl focus:border-brandBlue outline-none p-3.5" placeholder="student@gmail.com">
                     </div>
                     
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Select Course to Modify Access</label>
-                        <select id="course-select" required class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl focus:border-brandBlue focus:ring-1 focus:ring-brandBlue outline-none p-3.5 appearance-none">
+                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Select Course</label>
+                        <select id="course-select" required class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl focus:border-brandBlue outline-none p-3.5 appearance-none">
                             <option value="">Loading courses...</option>
                         </select>
                     </div>
 
                     <div class="flex gap-3 pt-4">
                         <button type="submit" id="btn-unlock" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3.5 rounded-xl shadow-md transition flex justify-center items-center gap-2">
-                            <i class="fa-solid fa-unlock"></i> Grant Access (Unlock)
+                            <i class="fa-solid fa-unlock"></i> Grant Access
                         </button>
                         <button type="button" id="btn-lock" class="flex-1 bg-red-50 border border-red-200 text-red-600 hover:bg-red-500 hover:text-white font-bold py-3.5 rounded-xl transition flex justify-center items-center gap-2">
-                            <i class="fa-solid fa-lock"></i> Revoke Access (Lock)
+                            <i class="fa-solid fa-lock"></i> Revoke Access
                         </button>
                     </div>
                 </form>
@@ -128,7 +130,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div class="md:col-span-2">
                             <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Course Title</label>
-                            <input type="text" id="course-title" required class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl p-3.5 outline-none focus:border-brandBlue" placeholder="e.g. Advanced Tally Prime with GST">
+                            <input type="text" id="course-title" required class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl p-3.5 outline-none focus:border-brandBlue" placeholder="e.g. Advanced Tally Prime">
                         </div>
                         
                         <div>
@@ -137,7 +139,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Thumbnail Image URL</label>
+                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Thumbnail URL</label>
                             <input type="url" id="course-thumb" required class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl p-3.5 outline-none focus:border-brandBlue" placeholder="https://image-link.jpg">
                         </div>
                     </div>
@@ -149,7 +151,6 @@
                         </div>
                         
                         <div id="video-fields-container" class="space-y-3">
-                            <!-- Video Row 1 -->
                             <div class="video-row flex flex-col md:flex-row gap-3 bg-gray-50 p-3 rounded-xl border border-gray-200 relative">
                                 <input type="text" placeholder="Video Title (e.g. Class 1: Basics)" required class="vid-title flex-1 bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none focus:border-brandBlue">
                                 <input type="url" placeholder="Video URL (Cloudinary/Drive link)" required class="vid-url flex-1 bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none focus:border-brandBlue">
@@ -159,11 +160,66 @@
 
                     <div class="pt-4">
                         <button type="submit" id="btn-submit-course" class="w-full bg-brandBlue hover:bg-blue-800 text-white font-bold py-4 rounded-xl shadow-lg transition flex justify-center items-center gap-2">
-                            <i class="fa-solid fa-cloud-arrow-up"></i> Publish Course to Database
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Publish Course
                         </button>
                     </div>
                 </form>
             </div>
+        </section>
+
+        <!-- TAB 3: MANAGE OFFLINE CENTRE (NEW) -->
+        <section id="manage-centre" class="tab-content max-w-3xl mx-auto space-y-6">
+            
+            <!-- A. Single Assets Updater -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2"><i class="fa-solid fa-image text-brandBlue mr-2"></i> Update Centre Assets</h3>
+                <form id="assets-form" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase">Teacher Profile Photo (URL)</label>
+                        <input type="url" id="asset-teacher" class="w-full bg-gray-50 border border-gray-200 text-sm rounded-lg p-2.5 outline-none" placeholder="Paste Image URL">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase">Teacher Certificate Image (URL)</label>
+                        <input type="url" id="asset-teacherCert" class="w-full bg-gray-50 border border-gray-200 text-sm rounded-lg p-2.5 outline-none" placeholder="Paste Image URL">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase">Student Certificate Sample (URL)</label>
+                        <input type="url" id="asset-studentCert" class="w-full bg-gray-50 border border-gray-200 text-sm rounded-lg p-2.5 outline-none" placeholder="Paste Image URL">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-500 uppercase">Centre Promotional Video (URL)</label>
+                        <input type="url" id="asset-centreVideo" class="w-full bg-gray-50 border border-gray-200 text-sm rounded-lg p-2.5 outline-none" placeholder="Paste Video URL (e.g. Cloudinary mp4)">
+                    </div>
+                    <button type="submit" id="btn-update-assets" class="bg-brandBlue text-white text-sm font-bold px-5 py-2.5 rounded-lg w-full mt-2 hover:bg-blue-800 transition">Update Assets</button>
+                </form>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- B. Add Banner -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2"><i class="fa-solid fa-panorama text-brandGold mr-2"></i> Add Carousel Banner</h3>
+                    <form id="banner-form" class="space-y-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase">Banner Image URL</label>
+                            <input type="url" id="banner-url" required class="w-full bg-gray-50 border border-gray-200 text-sm rounded-lg p-2.5 outline-none" placeholder="Paste Banner Image URL">
+                        </div>
+                        <button type="submit" id="btn-add-banner" class="bg-brandGold text-brandBlue text-sm font-bold px-5 py-2.5 rounded-lg w-full hover:bg-yellow-500 transition">Upload Banner</button>
+                    </form>
+                </div>
+
+                <!-- C. Add Gallery Image -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2"><i class="fa-solid fa-images text-brandBlue mr-2"></i> Add Gallery Image</h3>
+                    <form id="gallery-form" class="space-y-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase">Infrastructure Image URL</label>
+                            <input type="url" id="gallery-url" required class="w-full bg-gray-50 border border-gray-200 text-sm rounded-lg p-2.5 outline-none" placeholder="Paste Gallery Image URL">
+                        </div>
+                        <button type="submit" id="btn-add-gallery" class="bg-brandBlue text-white text-sm font-bold px-5 py-2.5 rounded-lg w-full hover:bg-blue-800 transition">Add to Gallery</button>
+                    </form>
+                </div>
+            </div>
+
         </section>
 
     </main>
@@ -171,26 +227,24 @@
     <!-- UI TAB SWITCHING LOGIC -->
     <script>
         function switchTab(tabId) {
-            // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
 
-            // Reset Desktop Sidebar Styles
-            document.getElementById('btn-manage-access').className = "w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl font-medium transition text-sm";
-            document.getElementById('btn-add-course').className = "w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl font-medium transition text-sm";
+            // Reset Desktop
+            const btns = ['btn-manage-access', 'btn-add-course', 'btn-manage-centre'];
+            btns.forEach(id => {
+                document.getElementById(id).className = "w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl font-medium transition text-sm";
+            });
             
-            // Reset Mobile Bottom Nav Styles
-            document.getElementById('mob-btn-manage-access').className = "w-1/2 py-3 text-gray-500 border-t-2 border-transparent font-medium text-xs";
-            document.getElementById('mob-btn-add-course').className = "w-1/2 py-3 text-gray-500 border-t-2 border-transparent font-medium text-xs";
+            // Reset Mobile
+            const mobBtns = ['mob-btn-manage-access', 'mob-btn-add-course', 'mob-btn-manage-centre'];
+            mobBtns.forEach(id => {
+                document.getElementById(id).className = "py-3 text-gray-500 border-t-2 border-transparent font-medium text-[10px]";
+            });
 
-            // Set Active Styles
-            if(tabId === 'manage-access') {
-                document.getElementById('btn-manage-access').className = "w-full flex items-center gap-3 px-4 py-3 bg-brandBlue text-white rounded-xl font-medium transition text-sm";
-                document.getElementById('mob-btn-manage-access').className = "w-1/2 py-3 text-brandBlue border-t-2 border-brandBlue font-bold text-xs";
-            } else {
-                document.getElementById('btn-add-course').className = "w-full flex items-center gap-3 px-4 py-3 bg-brandBlue text-white rounded-xl font-medium transition text-sm";
-                document.getElementById('mob-btn-add-course').className = "w-1/2 py-3 text-brandBlue border-t-2 border-brandBlue font-bold text-xs";
-            }
+            // Activate Target
+            document.getElementById(`btn-${tabId}`).className = "w-full flex items-center gap-3 px-4 py-3 bg-brandBlue text-white rounded-xl font-medium transition text-sm";
+            document.getElementById(`mob-btn-${tabId}`).className = "py-3 text-brandBlue border-t-2 border-brandBlue font-bold text-[10px]";
         }
 
         function addVideoField() {
@@ -222,14 +276,12 @@
             }
             
             alertMsg.innerText = msg;
-            
-            // Auto hide after 5 seconds
             setTimeout(() => { alertBox.classList.add('hidden'); }, 5000);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
 
-    <!-- FIREBASE ADMIN LOGIC (v10.8.1) -->
+    <!-- FIREBASE LOGIC -->
     <script type="module">
         import { app, auth } from './firebase-config.js';
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
@@ -237,7 +289,7 @@
         
         const db = getFirestore(app);
 
-        // Security Check: Redirect if not logged in
+        // Auth
         onAuthStateChanged(auth, (user) => {
             if (!user) {
                 alert("Unauthorized Access. Redirecting to Login...");
@@ -245,16 +297,13 @@
             }
         });
 
-        // Logout
         const handleLogout = () => {
             signOut(auth).then(() => { window.location.href = "login.html"; });
         };
         document.getElementById('admin-logout-btn').addEventListener('click', handleLogout);
         document.getElementById('admin-logout-mobile').addEventListener('click', handleLogout);
 
-        // ==========================================
-        // FEATURE 1: LOAD COURSES INTO DROPDOWN
-        // ==========================================
+        // 1. COURSE MANAGEMENT (Dropdown & Access)
         async function loadCourseDropdown() {
             const select = document.getElementById('course-select');
             select.innerHTML = '<option value="">Loading courses...</option>';
@@ -267,143 +316,144 @@
                 
                 select.innerHTML = '<option value="" disabled selected>-- Select a Course --</option>';
                 querySnapshot.forEach((docSnap) => {
-                    const course = docSnap.data();
                     const opt = document.createElement('option');
                     opt.value = docSnap.id;
-                    opt.textContent = `${course.title} (ID: ${docSnap.id})`;
+                    opt.textContent = `${docSnap.data().title} (ID: ${docSnap.id})`;
                     select.appendChild(opt);
                 });
             } catch(e) {
-                console.error("Error loading courses:", e);
                 select.innerHTML = '<option value="">Error connecting to DB</option>';
             }
         }
-        
-        // Load dropdown on startup
         loadCourseDropdown();
 
-        // ==========================================
-        // FEATURE 2: MANAGE ACCESS (UNLOCK / LOCK)
-        // ==========================================
-        
-        // UNLOCK COURSE
+        // Unlock Access
         document.getElementById('access-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btn-unlock');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
-            
             const email = document.getElementById('student-email').value.toLowerCase().trim();
             const courseId = document.getElementById('course-select').value;
-
-            if(!courseId) {
-                showAlert("Please select a valid course.", false);
-                btn.innerHTML = '<i class="fa-solid fa-unlock"></i> Grant Access (Unlock)';
-                return;
-            }
+            if(!courseId) return showAlert("Please select a course.", false);
 
             try {
-                // The exact path index.html and my-courses.html are looking for: "unlocked_courses/{email}"
-                const emailRef = doc(db, "unlocked_courses", email);
-                // merge: true ensures we don't overwrite other courses this student has bought
-                await setDoc(emailRef, { [courseId]: true }, { merge: true });
-                
-                showAlert(`Success! Course unlocked for student: ${email}`, true);
-                document.getElementById('student-email').value = '';
-                document.getElementById('course-select').selectedIndex = 0;
-            } catch(error) {
-                console.error(error);
-                showAlert(`Error: ${error.message}`, false);
-            } finally {
-                btn.innerHTML = '<i class="fa-solid fa-unlock"></i> Grant Access (Unlock)';
-            }
+                await setDoc(doc(db, "unlocked_courses", email), { [courseId]: true }, { merge: true });
+                showAlert(`Success! Course unlocked for: ${email}`, true);
+                e.target.reset();
+            } catch(err) { showAlert(err.message, false); }
         });
 
-        // LOCK COURSE
+        // Lock Access
         document.getElementById('btn-lock').addEventListener('click', async () => {
-            const btn = document.getElementById('btn-lock');
             const email = document.getElementById('student-email').value.toLowerCase().trim();
             const courseId = document.getElementById('course-select').value;
+            if(!email || !courseId) return showAlert("Enter email and course to lock.", false);
 
-            if(!email || !courseId) {
-                showAlert("Enter email and select a course to revoke access.", false);
-                return;
-            }
-
-            const confirmLock = confirm(`Are you sure you want to LOCK this course for ${email}?`);
-            if(!confirmLock) return;
-
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Locking...';
-
-            try {
-                const emailRef = doc(db, "unlocked_courses", email);
-                // Setting it to false restricts access in index.html and my-courses.html
-                await setDoc(emailRef, { [courseId]: false }, { merge: true });
-                
-                showAlert(`Course successfully LOCKED for student: ${email}`, true);
-                document.getElementById('student-email').value = '';
-                document.getElementById('course-select').selectedIndex = 0;
-            } catch(error) {
-                console.error(error);
-                showAlert(`Error: ${error.message}`, false);
-            } finally {
-                btn.innerHTML = '<i class="fa-solid fa-lock"></i> Revoke Access (Lock)';
+            if(confirm(`Lock this course for ${email}?`)) {
+                try {
+                    await setDoc(doc(db, "unlocked_courses", email), { [courseId]: false }, { merge: true });
+                    showAlert(`Course LOCKED for: ${email}`, true);
+                    document.getElementById('access-form').reset();
+                } catch(err) { showAlert(err.message, false); }
             }
         });
 
-
-        // ==========================================
-        // FEATURE 3: ADD NEW COURSE
-        // ==========================================
+        // Add New Course
         document.getElementById('add-course-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btn-submit-course');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Publishing...';
-
-            const title = document.getElementById('course-title').value;
-            const price = document.getElementById('course-price').value;
-            const thumb = document.getElementById('course-thumb').value;
-
-            // Extract all videos from dynamic fields
             const videos = [];
-            const rows = document.querySelectorAll('.video-row');
-            rows.forEach(row => {
-                const vTitle = row.querySelector('.vid-title').value;
-                const vUrl = row.querySelector('.vid-url').value;
-                if(vTitle && vUrl) {
-                    videos.push({ title: vTitle, url: vUrl });
-                }
+            document.querySelectorAll('.video-row').forEach(row => {
+                const title = row.querySelector('.vid-title').value;
+                const url = row.querySelector('.vid-url').value;
+                if(title && url) videos.push({ title, url });
             });
 
             const courseData = {
-                title: title,
-                price: parseInt(price),
-                thumb: thumb,
+                title: document.getElementById('course-title').value,
+                price: parseInt(document.getElementById('course-price').value),
+                thumb: document.getElementById('course-thumb').value,
                 videos: videos,
                 createdAt: new Date().toISOString()
             };
 
             try {
-                // Add to 'courses' collection
-                const docRef = await addDoc(collection(db, "courses"), courseData);
-                showAlert(`Course Published Successfully! ID: ${docRef.id}`, true);
-                
-                // Reset form
-                document.getElementById('add-course-form').reset();
-                document.getElementById('video-fields-container').innerHTML = `
-                    <div class="video-row flex flex-col md:flex-row gap-3 bg-gray-50 p-3 rounded-xl border border-gray-200 relative">
-                        <input type="text" placeholder="Video Title (e.g. Class 1: Basics)" required class="vid-title flex-1 bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none focus:border-brandBlue">
-                        <input type="url" placeholder="Video URL (Cloudinary/Drive link)" required class="vid-url flex-1 bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none focus:border-brandBlue">
-                    </div>
-                `;
-                
-                // Reload course dropdown to include the newly added course
+                await addDoc(collection(db, "courses"), courseData);
+                showAlert(`Course Published Successfully!`, true);
+                e.target.reset();
                 loadCourseDropdown();
+            } catch (error) { showAlert(error.message, false); }
+        });
 
-            } catch (error) {
-                console.error("Error adding course: ", error);
-                showAlert(`Failed to publish course: ${error.message}`, false);
+        // ==========================================
+        // NEW: MANAGE OFFLINE CENTRE LOGIC
+        // ==========================================
+
+        // A. Update Single Assets (Teacher, Certs, Video)
+        document.getElementById('assets-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-update-assets');
+            btn.innerHTML = 'Updating...';
+
+            const fields = [
+                { id: 'teacher', val: document.getElementById('asset-teacher').value },
+                { id: 'teacherCert', val: document.getElementById('asset-teacherCert').value },
+                { id: 'studentCert', val: document.getElementById('asset-studentCert').value },
+                { id: 'centreVideo', val: document.getElementById('asset-centreVideo').value }
+            ];
+
+            try {
+                for (let field of fields) {
+                    if(field.val.trim() !== "") {
+                        // Saves exactly where offline-centre.html reads it: doc(db, 'assets', type)
+                        await setDoc(doc(db, "assets", field.id), { url: field.val }, { merge: true });
+                    }
+                }
+                showAlert("Assets updated successfully! Changes will reflect on Offline Centre page.", true);
+                e.target.reset();
+            } catch(err) {
+                showAlert("Failed to update assets: " + err.message, false);
             } finally {
-                btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Publish Course to Database';
+                btn.innerHTML = 'Update Assets';
+            }
+        });
+
+        // B. Add Banner
+        document.getElementById('banner-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const url = document.getElementById('banner-url').value;
+            const btn = document.getElementById('btn-add-banner');
+            btn.innerHTML = 'Uploading...';
+
+            try {
+                await addDoc(collection(db, "banners"), { 
+                    url: url, 
+                    createdAt: new Date().toISOString() 
+                });
+                showAlert("Banner added! It will now scroll in the carousel.", true);
+                e.target.reset();
+            } catch(err) {
+                showAlert(err.message, false);
+            } finally {
+                btn.innerHTML = 'Upload Banner';
+            }
+        });
+
+        // C. Add Gallery Image
+        document.getElementById('gallery-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const url = document.getElementById('gallery-url').value;
+            const btn = document.getElementById('btn-add-gallery');
+            btn.innerHTML = 'Adding...';
+
+            try {
+                await addDoc(collection(db, "gallery"), { 
+                    url: url, 
+                    createdAt: new Date().toISOString() 
+                });
+                showAlert("Gallery image added successfully!", true);
+                e.target.reset();
+            } catch(err) {
+                showAlert(err.message, false);
+            } finally {
+                btn.innerHTML = 'Add to Gallery';
             }
         });
 
