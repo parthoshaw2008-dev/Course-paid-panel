@@ -95,37 +95,30 @@
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 md:p-8">
                 <div class="mb-6 border-b border-gray-100 pb-4">
                     <h2 class="text-2xl font-bold text-gray-800"><i class="fa-solid fa-unlock-keyhole text-brandGold mr-2"></i> Course Access</h2>
-                    <p class="text-xs text-gray-500 mt-1">Unlock or lock courses for students using their registered email.</p>
+                    <p class="text-xs text-gray-500 mt-1">Unlock or lock courses for students.</p>
                 </div>
 
                 <form id="access-form" class="space-y-5">
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Student's Registered Email</label>
-                        <input type="email" id="student-email" required class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl focus:border-brandBlue outline-none p-3.5" placeholder="student@gmail.com">
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Student's Registered Email</label>
+                        <input type="email" id="student-email" required class="w-full bg-gray-50 border border-gray-200 text-sm rounded-xl p-3.5" placeholder="student@gmail.com">
                     </div>
-                    
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Select Course</label>
-                        <select id="course-select" required class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl focus:border-brandBlue outline-none p-3.5 appearance-none">
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Select Course</label>
+                        <select id="course-select" required class="w-full bg-gray-50 border border-gray-200 text-sm rounded-xl p-3.5">
                             <option value="">Loading courses...</option>
                         </select>
                     </div>
-
                     <div class="flex gap-3 pt-4">
-                        <button type="submit" id="btn-unlock" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3.5 rounded-xl shadow-md transition flex justify-center items-center gap-2">
-                            <i class="fa-solid fa-unlock"></i> Grant Access
-                        </button>
-                        <button type="button" id="btn-lock" class="flex-1 bg-red-50 border border-red-200 text-red-600 hover:bg-red-500 hover:text-white font-bold py-3.5 rounded-xl transition flex justify-center items-center gap-2">
-                            <i class="fa-solid fa-lock"></i> Revoke Access
-                        </button>
+                        <button type="submit" id="btn-unlock" class="flex-1 bg-green-500 text-white font-bold py-3.5 rounded-xl shadow-md"><i class="fa-solid fa-unlock"></i> Grant Access</button>
+                        <button type="button" id="btn-lock" class="flex-1 bg-red-50 text-red-600 font-bold py-3.5 rounded-xl border border-red-200"><i class="fa-solid fa-lock"></i> Revoke Access</button>
                     </div>
                 </form>
             </div>
         </section>
 
-        <!-- TAB 2: MANAGE COURSES (ADD & DELETE) -->
+        <!-- TAB 2: MANAGE COURSES -->
         <section id="manage-courses" class="tab-content max-w-3xl mx-auto space-y-8">
-            
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 md:p-8">
                 <div class="mb-6 border-b border-gray-100 pb-4">
                     <h2 class="text-xl font-bold text-gray-800"><i class="fa-solid fa-folder-plus text-brandBlue mr-2"></i> Create New Course</h2>
@@ -134,180 +127,116 @@
                 <form id="add-course-form" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Course Title</label>
-                            <input type="text" id="course-title" required class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl p-3.5 outline-none focus:border-brandBlue" placeholder="e.g. Advanced Tally Prime">
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Course Title</label>
+                            <input type="text" id="course-title" required class="w-full bg-gray-50 border border-gray-200 text-sm rounded-xl p-3.5" placeholder="e.g. Advanced Tally Prime">
                         </div>
-                        
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Course Price (₹)</label>
-                            <input type="number" id="course-price" required class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl p-3.5 outline-none focus:border-brandBlue" placeholder="e.g. 2999">
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Course Price (₹)</label>
+                            <input type="number" id="course-price" required class="w-full bg-gray-50 border border-gray-200 text-sm rounded-xl p-3.5" placeholder="e.g. 2999">
                         </div>
 
-                        <!-- Gallery Upload for Course Thumbnail -->
+                        <!-- Gallery Upload -->
                         <div class="md:col-span-2 bg-blue-50 p-4 rounded-xl border border-blue-100">
-                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide mb-2">Upload Thumbnail from Gallery</label>
-                            <input type="file" id="course-thumb-file" accept="image/*" onchange="previewLocalFile(this, 'preview-course-thumb', 'preview-course-thumb-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2 outline-none mb-2">
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Upload Thumbnail from Gallery (Base64)</label>
+                            <input type="file" id="course-thumb-file" accept="image/*" onchange="previewLocalFile(this, 'preview-course-thumb', 'preview-course-thumb-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2 mb-2">
                             <p class="text-[10px] text-center text-gray-500 font-bold mb-2">-- OR PASTE URL --</p>
-                            <input type="url" id="course-thumb-url" oninput="updateUrlPreview(this, 'preview-course-thumb', 'preview-course-thumb-container')" class="w-full bg-white border border-gray-200 text-gray-800 text-sm rounded-lg p-2.5 outline-none" placeholder="Paste Image URL here">
+                            <input type="url" id="course-thumb-url" oninput="updateUrlPreview(this, 'preview-course-thumb', 'preview-course-thumb-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2.5" placeholder="Paste Image URL here">
                         </div>
 
+                        <!-- Live Preview -->
                         <div class="md:col-span-2 hidden" id="preview-course-thumb-container">
-                            <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">Live Preview:</p>
-                            <img id="preview-course-thumb" src="" class="w-full h-48 object-cover rounded-xl border border-gray-200 shadow-sm">
+                            <img id="preview-course-thumb" src="" class="w-full h-48 object-cover rounded-xl border border-gray-200">
                         </div>
                     </div>
 
                     <div class="border-t border-gray-200 pt-6">
                         <div class="flex justify-between items-center mb-4">
-                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wide">Video Lectures</label>
-                            <button type="button" onclick="addVideoField()" class="bg-blue-50 text-brandBlue font-bold text-xs px-3 py-1.5 rounded hover:bg-blue-100 transition"><i class="fa-solid fa-plus mr-1"></i> Add Video</button>
+                            <label class="block text-xs font-bold text-gray-600 uppercase">Video Lectures</label>
+                            <button type="button" onclick="addVideoField()" class="bg-blue-50 text-brandBlue font-bold text-xs px-3 py-1.5 rounded"><i class="fa-solid fa-plus"></i> Add Video</button>
                         </div>
-                        
                         <div id="video-fields-container" class="space-y-4">
                             <div class="video-row bg-gray-50 p-4 rounded-xl border border-gray-200 relative space-y-2">
-                                <input type="text" placeholder="Video Title (e.g. Class 1: Basics)" required class="vid-title w-full bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none">
-                                <p class="text-[10px] font-bold text-gray-500">Upload Video OR Paste Link:</p>
-                                <input type="file" accept="video/*" class="vid-file w-full bg-white border border-gray-200 text-sm rounded-lg p-1.5 outline-none">
-                                <input type="url" placeholder="Video URL (Cloudinary/Drive link)" class="vid-url w-full bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none">
+                                <input type="text" placeholder="Video Title" required class="vid-title w-full bg-white border border-gray-200 text-sm rounded-lg p-2.5">
+                                <input type="url" placeholder="Video URL (Cloudinary/Drive link)" required class="vid-url w-full bg-white border border-gray-200 text-sm rounded-lg p-2.5">
                             </div>
                         </div>
                     </div>
 
-                    <div class="pt-4">
-                        <button type="submit" id="btn-submit-course" class="w-full bg-brandBlue hover:bg-blue-800 text-white font-bold py-4 rounded-xl shadow-lg transition flex justify-center items-center gap-2">
-                            <i class="fa-solid fa-cloud-arrow-up"></i> Upload & Publish Course
-                        </button>
-                    </div>
+                    <button type="submit" id="btn-submit-course" class="w-full bg-brandBlue text-white font-bold py-4 rounded-xl shadow-lg"><i class="fa-solid fa-cloud-arrow-up"></i> Publish Course</button>
                 </form>
             </div>
 
-            <!-- Existing Courses List -->
+            <!-- Existing Courses -->
             <div class="bg-white rounded-2xl shadow-sm border border-red-100 p-6 md:p-8">
-                <div class="mb-4 border-b border-gray-100 pb-2 flex justify-between items-center">
-                    <h3 class="text-lg font-bold text-gray-800"><i class="fa-solid fa-trash-can text-red-500 mr-2"></i> Delete Existing Courses</h3>
-                </div>
-                <div id="existing-courses-list" class="space-y-3">
-                    <p class="text-xs text-gray-400 text-center py-4">Loading courses...</p>
-                </div>
+                <h3 class="text-lg font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2"><i class="fa-solid fa-trash-can text-red-500"></i> Delete Courses</h3>
+                <div id="existing-courses-list" class="space-y-3"></div>
             </div>
         </section>
 
-        <!-- TAB 3: MANAGE OFFLINE CENTRE (FULLY UPDATED WITH FILE UPLOADS) -->
+        <!-- TAB 3: MANAGE OFFLINE CENTRE (BASE64 UPLOADS) -->
         <section id="manage-centre" class="tab-content max-w-3xl mx-auto space-y-6">
             
-            <!-- A. Single Assets Updater -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                <h3 class="text-xl font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2"><i class="fa-solid fa-image text-brandBlue mr-2"></i> Update Centre Assets</h3>
+                <h3 class="text-xl font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2"><i class="fa-solid fa-image text-brandBlue"></i> Update Centre Assets</h3>
                 <form id="assets-form" class="space-y-5">
                     
-                    <!-- 1. Teacher Photo -->
                     <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
                         <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Teacher Profile Photo</label>
-                        <input type="file" id="asset-teacher-file" accept="image/*" onchange="previewLocalFile(this, 'preview-teacher', 'preview-teacher-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2 outline-none mb-2">
-                        <p class="text-[10px] text-center font-bold text-gray-400 mb-2">OR PASTE URL</p>
-                        <input type="url" id="asset-teacher" oninput="updateUrlPreview(this, 'preview-teacher', 'preview-teacher-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none" placeholder="Paste Image URL">
-                        
-                        <div id="preview-teacher-container" class="hidden flex justify-center mt-3">
-                            <img id="preview-teacher" src="" class="w-20 h-20 object-cover rounded-full border-2 border-brandGold shadow-sm">
-                        </div>
+                        <input type="file" id="asset-teacher-file" accept="image/*" onchange="previewLocalFile(this, 'preview-teacher', 'preview-teacher-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2 mb-2">
+                        <input type="url" id="asset-teacher" oninput="updateUrlPreview(this, 'preview-teacher', 'preview-teacher-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2.5" placeholder="OR Paste Image URL">
+                        <div id="preview-teacher-container" class="hidden mt-3"><img id="preview-teacher" src="" class="w-20 h-20 object-cover rounded-full border-2 border-brandGold"></div>
                     </div>
 
-                    <!-- 2. Teacher Cert -->
                     <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
                         <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Teacher Certificate Image</label>
-                        <input type="file" id="asset-tcert-file" accept="image/*" onchange="previewLocalFile(this, 'preview-tcert', 'preview-tcert-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2 outline-none mb-2">
-                        <p class="text-[10px] text-center font-bold text-gray-400 mb-2">OR PASTE URL</p>
-                        <input type="url" id="asset-teacherCert" oninput="updateUrlPreview(this, 'preview-tcert', 'preview-tcert-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none" placeholder="Paste Image URL">
-                        
-                        <div id="preview-tcert-container" class="hidden mt-3">
-                            <img id="preview-tcert" src="" class="h-24 object-contain rounded border border-gray-200 shadow-sm mx-auto">
-                        </div>
+                        <input type="file" id="asset-tcert-file" accept="image/*" onchange="previewLocalFile(this, 'preview-tcert', 'preview-tcert-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2 mb-2">
+                        <input type="url" id="asset-teacherCert" oninput="updateUrlPreview(this, 'preview-tcert', 'preview-tcert-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2.5" placeholder="OR Paste Image URL">
+                        <div id="preview-tcert-container" class="hidden mt-3"><img id="preview-tcert" src="" class="h-24 object-contain rounded mx-auto border border-gray-200"></div>
                     </div>
 
-                    <!-- 3. Student Cert -->
                     <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
                         <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Student Certificate Sample</label>
-                        <input type="file" id="asset-scert-file" accept="image/*" onchange="previewLocalFile(this, 'preview-scert', 'preview-scert-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2 outline-none mb-2">
-                        <p class="text-[10px] text-center font-bold text-gray-400 mb-2">OR PASTE URL</p>
-                        <input type="url" id="asset-studentCert" oninput="updateUrlPreview(this, 'preview-scert', 'preview-scert-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none" placeholder="Paste Image URL">
-                        
-                        <div id="preview-scert-container" class="hidden mt-3">
-                            <img id="preview-scert" src="" class="h-24 object-contain rounded border border-gray-200 shadow-sm mx-auto">
-                        </div>
+                        <input type="file" id="asset-scert-file" accept="image/*" onchange="previewLocalFile(this, 'preview-scert', 'preview-scert-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2 mb-2">
+                        <input type="url" id="asset-studentCert" oninput="updateUrlPreview(this, 'preview-scert', 'preview-scert-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2.5" placeholder="OR Paste Image URL">
+                        <div id="preview-scert-container" class="hidden mt-3"><img id="preview-scert" src="" class="h-24 object-contain rounded mx-auto border border-gray-200"></div>
                     </div>
 
-                    <!-- 4. Centre Video -->
                     <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Centre Promotional Video</label>
-                        <input type="file" id="asset-video-file" accept="video/*" onchange="previewLocalFile(this, 'preview-video', 'preview-video-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2 outline-none mb-2">
-                        <p class="text-[10px] text-center font-bold text-gray-400 mb-2">OR PASTE URL</p>
-                        <input type="url" id="asset-centreVideo" oninput="updateUrlPreview(this, 'preview-video', 'preview-video-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none" placeholder="Paste Video URL">
-                        
-                        <div id="preview-video-container" class="hidden mt-3">
-                            <video id="preview-video" controls class="w-full h-40 object-cover rounded-xl border border-gray-200 shadow-sm bg-black"></video>
-                        </div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Centre Video (URL ONLY)</label>
+                        <input type="url" id="asset-centreVideo" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2.5" placeholder="Paste Video URL (Base64 videos are too large)">
                     </div>
 
-                    <button type="submit" id="btn-update-assets" class="bg-brandBlue text-white text-sm font-bold px-5 py-4 rounded-xl shadow-lg w-full hover:bg-blue-800 transition">
-                        <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Update All Assets
-                    </button>
+                    <button type="submit" id="btn-update-assets" class="bg-brandBlue text-white text-sm font-bold px-5 py-4 rounded-xl w-full">Update All Assets</button>
                 </form>
             </div>
 
-            <!-- BANNERS & GALLERY GRID -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Banner -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2"><i class="fa-solid fa-panorama text-brandGold mr-2"></i> Manage Banners</h3>
-                        
-                        <form id="banner-form" class="space-y-4 mb-6">
-                            <div class="bg-yellow-50 p-3 rounded-xl border border-yellow-100">
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-2">Upload from Gallery</label>
-                                <input type="file" id="banner-file" accept="image/*" onchange="previewLocalFile(this, 'preview-banner', 'preview-banner-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-1.5 outline-none mb-2">
-                                <p class="text-[10px] text-center font-bold text-gray-400 mb-2">OR PASTE URL</p>
-                                <input type="url" id="banner-url" oninput="updateUrlPreview(this, 'preview-banner', 'preview-banner-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none" placeholder="Paste Image URL">
-                            </div>
-                            
-                            <div id="preview-banner-container" class="hidden">
-                                <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">Preview:</p>
-                                <img id="preview-banner" src="" class="w-full h-24 object-cover rounded-lg border border-gray-200 shadow-sm">
-                            </div>
-                            <button type="submit" id="btn-add-banner" class="bg-brandGold text-brandBlue text-sm font-bold px-5 py-3 rounded-lg w-full hover:bg-yellow-500 transition shadow-md">Upload Banner</button>
-                        </form>
-
-                        <div class="border-t border-gray-100 pt-4">
-                            <h4 class="text-[10px] font-bold text-gray-500 uppercase mb-2">Existing Banners (Click <i class="fa-solid fa-trash text-red-500"></i>)</h4>
-                            <div id="existing-banners-list" class="grid grid-cols-2 gap-2"></div>
+                <!-- Add Banner -->
+                <div class="bg-white rounded-2xl p-6 border border-gray-200">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2"><i class="fa-solid fa-panorama text-brandGold"></i> Manage Banners</h3>
+                    <form id="banner-form" class="space-y-4 mb-6">
+                        <div class="bg-yellow-50 p-3 rounded-xl border border-yellow-100">
+                            <input type="file" id="banner-file" accept="image/*" onchange="previewLocalFile(this, 'preview-banner', 'preview-banner-container')" class="w-full bg-white text-sm rounded-lg p-1.5 mb-2">
+                            <input type="url" id="banner-url" oninput="updateUrlPreview(this, 'preview-banner', 'preview-banner-container')" class="w-full bg-white text-sm rounded-lg p-2.5" placeholder="OR Paste Image URL">
                         </div>
-                    </div>
+                        <div id="preview-banner-container" class="hidden"><img id="preview-banner" src="" class="w-full h-24 object-cover rounded-lg"></div>
+                        <button type="submit" id="btn-add-banner" class="bg-brandGold text-brandBlue text-sm font-bold py-3 rounded-lg w-full">Upload Banner</button>
+                    </form>
+                    <div class="border-t border-gray-100 pt-4"><div id="existing-banners-list" class="grid grid-cols-2 gap-2"></div></div>
                 </div>
 
-                <!-- Gallery -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col justify-between">
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2"><i class="fa-solid fa-images text-brandBlue mr-2"></i> Manage Gallery</h3>
-                        
-                        <form id="gallery-form" class="space-y-4 mb-6">
-                            <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
-                                <label class="block text-[10px] font-bold text-gray-600 uppercase mb-2">Upload Infrastructure Image</label>
-                                <input type="file" id="gallery-file" accept="image/*" onchange="previewLocalFile(this, 'preview-gallery', 'preview-gallery-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-1.5 outline-none mb-2">
-                                <p class="text-[10px] text-center font-bold text-gray-400 mb-2">OR PASTE URL</p>
-                                <input type="url" id="gallery-url" oninput="updateUrlPreview(this, 'preview-gallery', 'preview-gallery-container')" class="w-full bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none" placeholder="Paste Image URL">
-                            </div>
-
-                            <div id="preview-gallery-container" class="hidden text-center">
-                                <p class="text-[10px] text-gray-400 font-bold uppercase mb-1 text-left">Preview:</p>
-                                <img id="preview-gallery" src="" class="w-32 h-32 object-cover rounded-lg border border-gray-200 shadow-sm mx-auto">
-                            </div>
-                            <button type="submit" id="btn-add-gallery" class="bg-brandBlue text-white text-sm font-bold px-5 py-3 rounded-lg w-full hover:bg-blue-800 transition shadow-md">Upload to Gallery</button>
-                        </form>
-
-                        <div class="border-t border-gray-100 pt-4">
-                            <h4 class="text-[10px] font-bold text-gray-500 uppercase mb-2">Existing Gallery (Click <i class="fa-solid fa-trash text-red-500"></i>)</h4>
-                            <div id="existing-gallery-list" class="grid grid-cols-3 gap-2"></div>
+                <!-- Add Gallery -->
+                <div class="bg-white rounded-2xl p-6 border border-gray-200">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2"><i class="fa-solid fa-images text-brandBlue"></i> Manage Gallery</h3>
+                    <form id="gallery-form" class="space-y-4 mb-6">
+                        <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
+                            <input type="file" id="gallery-file" accept="image/*" onchange="previewLocalFile(this, 'preview-gallery', 'preview-gallery-container')" class="w-full bg-white text-sm rounded-lg p-1.5 mb-2">
+                            <input type="url" id="gallery-url" oninput="updateUrlPreview(this, 'preview-gallery', 'preview-gallery-container')" class="w-full bg-white text-sm rounded-lg p-2.5" placeholder="OR Paste Image URL">
                         </div>
-                    </div>
+                        <div id="preview-gallery-container" class="hidden"><img id="preview-gallery" src="" class="w-32 h-32 object-cover rounded-lg mx-auto"></div>
+                        <button type="submit" id="btn-add-gallery" class="bg-brandBlue text-white text-sm font-bold py-3 rounded-lg w-full">Upload to Gallery</button>
+                    </form>
+                    <div class="border-t border-gray-100 pt-4"><div id="existing-gallery-list" class="grid grid-cols-3 gap-2"></div></div>
                 </div>
             </div>
 
@@ -320,25 +249,23 @@
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-
-            const btns = ['btn-manage-access', 'btn-manage-courses', 'btn-manage-centre'];
-            btns.forEach(id => {
+            ['btn-manage-access', 'btn-manage-courses', 'btn-manage-centre'].forEach(id => {
                 document.getElementById(id).className = "w-full flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-gray-800 hover:text-white rounded-xl font-medium transition text-sm";
             });
-            
-            const mobBtns = ['mob-btn-manage-access', 'mob-btn-manage-courses', 'mob-btn-manage-centre'];
-            mobBtns.forEach(id => {
+            ['mob-btn-manage-access', 'mob-btn-manage-courses', 'mob-btn-manage-centre'].forEach(id => {
                 document.getElementById(id).className = "py-3 text-gray-500 border-t-2 border-transparent font-medium text-[10px]";
             });
-
             document.getElementById(`btn-${tabId}`).className = "w-full flex items-center gap-3 px-4 py-3 bg-brandBlue text-white rounded-xl font-medium transition text-sm";
             document.getElementById(`mob-btn-${tabId}`).className = "py-3 text-brandBlue border-t-2 border-brandBlue font-bold text-[10px]";
         }
 
-        // Preview File from Mobile Gallery BEFORE uploading
         function previewLocalFile(inputElement, mediaId, containerId) {
             const file = inputElement.files[0];
             if(file) {
+                // Warning if file is too large (over 1MB) for Base64 saving
+                if(file.size > 1048576) {
+                    alert("Warning: This image is larger than 1MB. It might fail to save in database. Please use a smaller image.");
+                }
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById(mediaId).src = e.target.result;
@@ -348,7 +275,6 @@
             }
         }
 
-        // Preview URL
         function updateUrlPreview(inputElement, mediaId, containerId) {
             const url = inputElement.value.trim();
             if (url) { 
@@ -366,9 +292,7 @@
             div.className = "video-row bg-gray-50 p-4 rounded-xl border border-gray-200 relative space-y-2";
             div.innerHTML = `
                 <input type="text" placeholder="Video Title (e.g. Class ${rowCount})" required class="vid-title w-full bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none">
-                <p class="text-[10px] font-bold text-gray-500">Upload Video OR Paste Link:</p>
-                <input type="file" accept="video/*" class="vid-file w-full bg-white border border-gray-200 text-sm rounded-lg p-1.5 outline-none">
-                <input type="url" placeholder="Video URL (Cloudinary/Drive link)" class="vid-url w-full bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none">
+                <input type="url" placeholder="Video URL (Cloudinary/Drive link)" required class="vid-url w-full bg-white border border-gray-200 text-sm rounded-lg p-2.5 outline-none">
                 <button type="button" onclick="this.parentElement.remove()" class="absolute -right-2 -top-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 text-xs shadow"><i class="fa-solid fa-xmark"></i></button>
             `;
             container.appendChild(div);
@@ -378,84 +302,67 @@
             const alertBox = document.getElementById('admin-alert');
             const alertMsg = document.getElementById('admin-alert-msg');
             const alertIcon = document.getElementById('admin-alert-icon');
-            
             alertBox.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'bg-blue-100', 'text-blue-800');
-            
             if(isSuccess === true) {
-                alertBox.classList.add('bg-green-100', 'text-green-800');
-                alertIcon.className = "fa-solid fa-circle-check text-xl";
+                alertBox.classList.add('bg-green-100', 'text-green-800'); alertIcon.className = "fa-solid fa-circle-check text-xl";
             } else if(isSuccess === false) {
-                alertBox.classList.add('bg-red-100', 'text-red-800');
-                alertIcon.className = "fa-solid fa-triangle-exclamation text-xl";
+                alertBox.classList.add('bg-red-100', 'text-red-800'); alertIcon.className = "fa-solid fa-triangle-exclamation text-xl";
             } else {
-                alertBox.classList.add('bg-blue-100', 'text-blue-800');
-                alertIcon.className = "fa-solid fa-spinner fa-spin text-xl";
+                alertBox.classList.add('bg-blue-100', 'text-blue-800'); alertIcon.className = "fa-solid fa-spinner fa-spin text-xl";
             }
-            
             alertMsg.innerText = msg;
-            if(isSuccess !== 'loading') {
-                setTimeout(() => { alertBox.classList.add('hidden'); }, 5000);
-            }
+            if(isSuccess !== 'loading') { setTimeout(() => { alertBox.classList.add('hidden'); }, 5000); }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
 
-    <!-- FIREBASE STORAGE & FIRESTORE LOGIC -->
+    <!-- FIREBASE (FIRESTORE ONLY) LOGIC -->
     <script type="module">
         import { app, auth } from './firebase-config.js';
         import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, collection, getDocs, addDoc, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
         
         const db = getFirestore(app);
-        const storage = getStorage(app);
 
         onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                alert("Unauthorized Access. Redirecting to Login...");
-                window.location.href = "login.html";
-            }
+            if (!user) { alert("Unauthorized Access."); window.location.href = "login.html"; }
         });
 
         document.getElementById('admin-logout-btn').addEventListener('click', () => signOut(auth).then(() => window.location.href = "login.html"));
         document.getElementById('admin-logout-mobile').addEventListener('click', () => signOut(auth).then(() => window.location.href = "login.html"));
 
         // =====================================
-        // REUSABLE UPLOAD FUNCTION
+        // BASE64 IMAGE CONVERTOR
         // =====================================
-        async function uploadFileToFirebase(file, folder) {
-            if(!file) return null;
-            const uniqueName = Date.now() + '_' + file.name;
-            const storageRef = ref(storage, `${folder}/${uniqueName}`);
-            await uploadBytes(storageRef, file);
-            return await getDownloadURL(storageRef);
+        async function getBase64FromFile(fileInputId) {
+            const file = document.getElementById(fileInputId).files[0];
+            if (!file) return null;
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
         }
 
         // =====================================
         // DATA FETCHERS & RENDERERS
         // =====================================
-        
         async function fetchAndRenderCourses() {
             const select = document.getElementById('course-select');
             const list = document.getElementById('existing-courses-list');
             try {
                 const querySnapshot = await getDocs(collection(db, "courses"));
-                if(querySnapshot.empty) {
-                    select.innerHTML = '<option value="">No courses available</option>';
-                    list.innerHTML = '<p class="text-xs text-gray-400 py-2">No courses found.</p>';
-                    return;
-                }
-                select.innerHTML = '<option value="" disabled selected>-- Select a Course --</option>';
-                list.innerHTML = '';
+                select.innerHTML = '<option value="" disabled selected>-- Select a Course --</option>'; list.innerHTML = '';
+                if(querySnapshot.empty) { list.innerHTML = '<p class="text-xs text-gray-400 py-2">No courses found.</p>'; return; }
+                
                 querySnapshot.forEach((docSnap) => {
                     const id = docSnap.id; const data = docSnap.data();
-                    const opt = document.createElement('option');
-                    opt.value = id; opt.textContent = data.title;
-                    select.appendChild(opt);
+                    const opt = document.createElement('option'); opt.value = id; opt.textContent = data.title; select.appendChild(opt);
                     list.innerHTML += `
                         <div class="flex justify-between items-center bg-gray-50 border border-gray-200 p-3 rounded-xl">
                             <div><h4 class="font-bold text-sm text-gray-800">${data.title}</h4></div>
-                            <button onclick="window.deleteCourse('${id}')" class="bg-red-100 text-red-600 w-8 h-8 rounded-lg flex items-center justify-center transition shadow-sm"><i class="fa-solid fa-trash-can"></i></button>
+                            <button onclick="window.deleteCourse('${id}')" class="bg-red-100 text-red-600 w-8 h-8 rounded-lg"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                     `;
                 });
@@ -468,12 +375,7 @@
                 const snap = await getDocs(collection(db, "banners"));
                 list.innerHTML = '';
                 snap.forEach(d => {
-                    list.innerHTML += `
-                        <div class="relative group rounded-lg overflow-hidden border border-gray-200 h-16">
-                            <img src="${d.data().url}" class="w-full h-full object-cover">
-                            <button onclick="window.deleteBanner('${d.id}')" class="absolute inset-0 bg-black/50 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition"><i class="fa-solid fa-trash text-red-500 text-lg"></i></button>
-                        </div>
-                    `;
+                    list.innerHTML += `<div class="relative group rounded-lg overflow-hidden border border-gray-200 h-16"><img src="${d.data().url}" class="w-full h-full object-cover"><button onclick="window.deleteBanner('${d.id}')" class="absolute inset-0 bg-black/50 flex items-center justify-center text-white opacity-0 group-hover:opacity-100"><i class="fa-solid fa-trash text-red-500"></i></button></div>`;
                 });
             } catch(e) { console.log(e); }
         }
@@ -484,60 +386,38 @@
                 const snap = await getDocs(collection(db, "gallery"));
                 list.innerHTML = '';
                 snap.forEach(d => {
-                    list.innerHTML += `
-                        <div class="relative group rounded-lg overflow-hidden border border-gray-200 aspect-square">
-                            <img src="${d.data().url}" class="w-full h-full object-cover">
-                            <button onclick="window.deleteGallery('${d.id}')" class="absolute inset-0 bg-black/50 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition"><i class="fa-solid fa-trash text-red-500 text-lg"></i></button>
-                        </div>
-                    `;
+                    list.innerHTML += `<div class="relative group rounded-lg overflow-hidden border border-gray-200 aspect-square"><img src="${d.data().url}" class="w-full h-full object-cover"><button onclick="window.deleteGallery('${d.id}')" class="absolute inset-0 bg-black/50 flex items-center justify-center text-white opacity-0 group-hover:opacity-100"><i class="fa-solid fa-trash text-red-500"></i></button></div>`;
                 });
             } catch(e) { console.log(e); }
         }
 
         fetchAndRenderCourses(); fetchAndRenderBanners(); fetchAndRenderGallery();
 
-        // =====================================
         // DELETE FUNCTIONS
-        // =====================================
-        window.deleteCourse = async (id) => {
-            if(confirm("Delete this course permanently?")) {
-                await deleteDoc(doc(db, "courses", id)); showAlert("Course deleted!", true); fetchAndRenderCourses();
-            }
-        };
-        window.deleteBanner = async (id) => {
-            if(confirm("Delete this banner?")) {
-                await deleteDoc(doc(db, "banners", id)); showAlert("Banner deleted!", true); fetchAndRenderBanners();
-            }
-        };
-        window.deleteGallery = async (id) => {
-            if(confirm("Delete this image?")) {
-                await deleteDoc(doc(db, "gallery", id)); showAlert("Image deleted!", true); fetchAndRenderGallery();
-            }
-        };
+        window.deleteCourse = async (id) => { if(confirm("Delete this course?")) { await deleteDoc(doc(db, "courses", id)); fetchAndRenderCourses(); } };
+        window.deleteBanner = async (id) => { if(confirm("Delete banner?")) { await deleteDoc(doc(db, "banners", id)); fetchAndRenderBanners(); } };
+        window.deleteGallery = async (id) => { if(confirm("Delete image?")) { await deleteDoc(doc(db, "gallery", id)); fetchAndRenderGallery(); } };
 
         // =====================================
-        // ADD NEW COURSE WITH FILES
+        // ADD NEW COURSE WITH BASE64
         // =====================================
         document.getElementById('add-course-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-submit-course');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading Files...';
-            showAlert("Uploading files to Firebase. Please wait...", 'loading');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+            showAlert("Saving to Database...", 'loading');
 
             try {
-                let thumbUrl = document.getElementById('course-thumb-url').value;
-                const thumbFile = document.getElementById('course-thumb-file').files[0];
-                if(thumbFile) { thumbUrl = await uploadFileToFirebase(thumbFile, 'course_thumbnails'); }
+                // Check if File is selected, otherwise use URL
+                let thumbUrl = await getBase64FromFile('course-thumb-file');
+                if(!thumbUrl) thumbUrl = document.getElementById('course-thumb-url').value;
 
                 const videos = [];
-                const rows = document.querySelectorAll('.video-row');
-                for (let row of rows) {
+                document.querySelectorAll('.video-row').forEach(row => {
                     const title = row.querySelector('.vid-title').value;
-                    let url = row.querySelector('.vid-url').value;
-                    const vFile = row.querySelector('.vid-file').files[0];
-                    if(vFile) { url = await uploadFileToFirebase(vFile, 'course_videos'); }
+                    const url = row.querySelector('.vid-url').value;
                     if(title && url) videos.push({ title, url });
-                }
+                });
 
                 await addDoc(collection(db, "courses"), {
                     title: document.getElementById('course-title').value,
@@ -547,122 +427,79 @@
                     createdAt: new Date().toISOString()
                 });
                 
-                showAlert(`Course Published Successfully!`, true);
-                e.target.reset();
-                document.getElementById('preview-course-thumb-container').classList.add('hidden');
-                fetchAndRenderCourses();
-            } catch (error) { 
-                showAlert("Error: Make sure Firebase Storage rules allow writing.", false); 
-            } finally {
-                btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Upload & Publish Course';
-            }
+                showAlert(`Course Published!`, true); e.target.reset(); fetchAndRenderCourses();
+            } catch (error) { showAlert("Error: " + error.message, false); } 
+            finally { btn.innerHTML = 'Publish Course'; }
         });
 
         // Grant / Revoke Access
         document.getElementById('access-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('student-email').value.toLowerCase().trim();
-            const courseId = document.getElementById('course-select').value;
-            await setDoc(doc(db, "unlocked_courses", email), { [courseId]: true }, { merge: true });
-            showAlert(`Course unlocked for: ${email}`, true); e.target.reset();
+            await setDoc(doc(db, "unlocked_courses", document.getElementById('student-email').value.toLowerCase().trim()), { [document.getElementById('course-select').value]: true }, { merge: true });
+            showAlert(`Access Granted`, true); e.target.reset();
         });
         document.getElementById('btn-lock').addEventListener('click', async () => {
-            const email = document.getElementById('student-email').value.toLowerCase().trim();
-            const courseId = document.getElementById('course-select').value;
-            if(email && courseId && confirm(`Lock course?`)) {
-                await setDoc(doc(db, "unlocked_courses", email), { [courseId]: false }, { merge: true });
-                showAlert(`Course LOCKED`, true); document.getElementById('access-form').reset();
+            if(confirm(`Lock course?`)) {
+                await setDoc(doc(db, "unlocked_courses", document.getElementById('student-email').value.toLowerCase().trim()), { [document.getElementById('course-select').value]: false }, { merge: true });
+                showAlert(`Access Revoked`, true); document.getElementById('access-form').reset();
             }
         });
 
         // =====================================
-        // MANAGE CENTRE ASSETS (NEW WITH FILE UPLOADS)
+        // MANAGE CENTRE ASSETS (BASE64)
         // =====================================
-        
         document.getElementById('assets-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-update-assets');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading Assets...';
-            showAlert("Uploading Centre Assets to Firebase...", 'loading');
-
-            // Map inputs to their Firestore doc IDs
-            const fields = [
-                { id: 'teacher', urlId: 'asset-teacher', fileId: 'asset-teacher-file' },
-                { id: 'teacherCert', urlId: 'asset-teacherCert', fileId: 'asset-tcert-file' },
-                { id: 'studentCert', urlId: 'asset-studentCert', fileId: 'asset-scert-file' },
-                { id: 'centreVideo', urlId: 'asset-centreVideo', fileId: 'asset-video-file' }
-            ];
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Updating...';
+            showAlert("Saving Assets...", 'loading');
 
             try {
-                for (let field of fields) {
-                    let finalUrl = document.getElementById(field.urlId).value.trim();
-                    const fileInput = document.getElementById(field.fileId);
-                    
-                    // Priority to File if selected
-                    if (fileInput && fileInput.files.length > 0) {
-                        finalUrl = await uploadFileToFirebase(fileInput.files[0], 'centre_assets');
-                    }
+                // 1. Teacher Photo
+                let teacherUrl = await getBase64FromFile('asset-teacher-file') || document.getElementById('asset-teacher').value;
+                if(teacherUrl) await setDoc(doc(db, "assets", 'teacher'), { url: teacherUrl }, { merge: true });
 
-                    // Save to Firestore if URL is not empty
-                    if (finalUrl !== "") {
-                        await setDoc(doc(db, "assets", field.id), { url: finalUrl }, { merge: true });
-                    }
-                }
-                
-                showAlert("Assets updated successfully! Changes will reflect on Offline Centre page.", true);
-                e.target.reset();
-                ['preview-teacher','preview-tcert','preview-scert','preview-video'].forEach(id => {
-                    document.getElementById(id+'-container').classList.add('hidden');
-                });
-            } catch(err) {
-                showAlert("Failed to update assets: " + err.message, false);
-            } finally {
-                btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up mr-2"></i> Update All Assets';
-            }
+                // 2. Teacher Cert
+                let tCertUrl = await getBase64FromFile('asset-tcert-file') || document.getElementById('asset-teacherCert').value;
+                if(tCertUrl) await setDoc(doc(db, "assets", 'teacherCert'), { url: tCertUrl }, { merge: true });
+
+                // 3. Student Cert
+                let sCertUrl = await getBase64FromFile('asset-scert-file') || document.getElementById('asset-studentCert').value;
+                if(sCertUrl) await setDoc(doc(db, "assets", 'studentCert'), { url: sCertUrl }, { merge: true });
+
+                // 4. Video (URL Only, Base64 video is too heavy)
+                let videoUrl = document.getElementById('asset-centreVideo').value;
+                if(videoUrl) await setDoc(doc(db, "assets", 'centreVideo'), { url: videoUrl }, { merge: true });
+
+                showAlert("Assets updated successfully!", true); e.target.reset();
+            } catch(err) { showAlert(err.message, false); } 
+            finally { btn.innerHTML = 'Update All Assets'; }
         });
 
         // Add Banner
         document.getElementById('banner-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btn-add-banner');
-            btn.innerHTML = 'Uploading...';
-            showAlert("Uploading Banner...", 'loading');
-
+            const btn = document.getElementById('btn-add-banner'); btn.innerHTML = 'Saving...';
             try {
-                let url = document.getElementById('banner-url').value;
-                const file = document.getElementById('banner-file').files[0];
-                if(file) { url = await uploadFileToFirebase(file, 'banners'); }
-
+                let url = await getBase64FromFile('banner-file') || document.getElementById('banner-url').value;
                 if(url) {
                     await addDoc(collection(db, "banners"), { url: url, createdAt: new Date().toISOString() });
-                    showAlert("Banner added!", true);
-                    e.target.reset(); document.getElementById('preview-banner-container').classList.add('hidden');
-                    fetchAndRenderBanners();
-                } else { showAlert("Select file or paste URL", false); }
-            } catch(err) { showAlert(err.message, false); } 
-            finally { btn.innerHTML = 'Upload Banner'; }
+                    showAlert("Banner added!", true); e.target.reset(); fetchAndRenderBanners();
+                }
+            } catch(err) { showAlert(err.message, false); } finally { btn.innerHTML = 'Upload Banner'; }
         });
 
         // Add Gallery
         document.getElementById('gallery-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btn-add-gallery');
-            btn.innerHTML = 'Uploading...';
-            showAlert("Uploading Image...", 'loading');
-
+            const btn = document.getElementById('btn-add-gallery'); btn.innerHTML = 'Saving...';
             try {
-                let url = document.getElementById('gallery-url').value;
-                const file = document.getElementById('gallery-file').files[0];
-                if(file) { url = await uploadFileToFirebase(file, 'gallery'); }
-
+                let url = await getBase64FromFile('gallery-file') || document.getElementById('gallery-url').value;
                 if(url) {
                     await addDoc(collection(db, "gallery"), { url: url, createdAt: new Date().toISOString() });
-                    showAlert("Gallery image added!", true);
-                    e.target.reset(); document.getElementById('preview-gallery-container').classList.add('hidden');
-                    fetchAndRenderGallery();
-                } else { showAlert("Select file or paste URL", false); }
-            } catch(err) { showAlert(err.message, false); } 
-            finally { btn.innerHTML = 'Add to Gallery'; }
+                    showAlert("Image added!", true); e.target.reset(); fetchAndRenderGallery();
+                }
+            } catch(err) { showAlert(err.message, false); } finally { btn.innerHTML = 'Upload to Gallery'; }
         });
 
     </script>
