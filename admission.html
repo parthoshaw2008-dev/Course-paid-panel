@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admissions Admin | Smart Tech</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Poppins', 'sans-serif'], },
+                    colors: { brandBlue: '#0f4c81', brandGold: '#f59e0b' }
+                }
+            }
+        }
+    </script>
+    <style> body { font-family: 'Poppins', sans-serif; background-color: #f1f5f9; } </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <header class="bg-[#0f172a] shadow-lg sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-brandGold flex items-center justify-center text-[#0f172a] font-black text-xl shadow-sm">ST</div>
+                <div>
+                    <h1 class="font-bold text-lg text-white leading-tight">Admissions Portal</h1>
+                    <p class="text-[10px] text-gray-400 uppercase tracking-widest">Smart Tech Admin</p>
+                </div>
+            </div>
+            <button id="admin-logout-btn" class="text-red-400 hover:text-red-300 font-bold text-sm flex items-center gap-2 bg-white/10 px-4 py-2 rounded-lg transition">
+                <i class="fa-solid fa-power-off"></i> <span class="hidden sm:inline">Logout</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-8">
+        
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 border-b border-gray-200 pb-4">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800">Student Applications</h2>
+                <p class="text-sm text-gray-500 mt-1">Review, Call, and Approve Offline Admissions.</p>
+            </div>
+            <button onclick="fetchAndRenderAdmissions()" class="bg-brandBlue text-white text-sm font-bold px-4 py-2 rounded-lg shadow-sm hover:bg-blue-800 transition flex items-center gap-2">
+                <i class="fa-solid fa-rotate-right"></i> Refresh
+            </button>
+        </div>
+
+        <div id="admin-alert" class="hidden mb-6 p-4 rounded-xl font-bold flex items-center gap-3 transition-all shadow-sm">
+            <i id="admin-alert-icon" class="fa-solid fa-circle-check text-xl"></i>
+            <span id="admin-alert-msg">Message goes here</span>
+        </div>
+
+        <div id="admissions-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="col-span-full flex flex-col items-center justify-center py-20 text-gray-400">
+                <i class="fa-solid fa-spinner fa-spin text-4xl mb-3 text-brandBlue"></i>
+                <p class="text-sm font-bold uppercase tracking-widest">Loading Applications...</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script type="module">
+        import { app, auth } from './firebase-config.js';
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        
+        const db = getFirestore(app);
+
+        // Authentication Check
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                alert("Unauthorized Access. Redirecting to Login...");
+                window.location.href = "login.html";
+            }
+        });
+
+        document.getElementById('admin-logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => window.location.href = "login.html");
+        });
+
+        // Fetch & Render Admissions
+        window.fetchAndRenderAdmissions = async function() {
+            const grid = document.getElementById('admissions-grid');
+            grid.innerHTML = `<div class="col-span-full flex flex-col items-center justify-center py-20 text-gray-400"><i class="fa-solid fa-spinner fa-spin text-4xl mb-3 text-brandBlue"></i><p class="text-sm font-bold uppercase">Refreshing...</p></div>`;
+            
+            try {
+                const snap = await getDocs(collection(db, "offline_admissions"));
+                if(snap.empty) {
+                    grid.innerHTML = '<div class="col-span-full text-center py-10 bg-white rounded-2xl border border-dashed border-gray-300 text-gray-500 font-bold"><i class="fa-regular fa-folder-open text-3xl mb-2 block"></i> No admissions found.</div>';
+                    return;
+                }
+
+                let html = '';
+                const admissions = [];
+                snap.forEach(d => admissions.push({ id: d.id, ...d.data() }));
+                
+                // Sort by date (Newest first)
+                admissions.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+
+                admissions.forEach(data => {
+                    const isApproved = data.status === "Approved";
+                    const dateObj = new Date(data.submittedAt);
+                    const formattedDate = dateObj.toLocaleDateString('en-IN') + ' ' + dateObj.toLocaleTimeString('en-IN', {hour: '2-digit', minute:'2-digit'});
+                    
+                    // Fee text logic based on Monthly or Yearly
+                    const feeAmountText = data.feeType === 'Monthly' ? `<span class="text-orange-500">₹${data.courseDetails.mon}</span> <span class="text-gray-400 font-normal">/ month</span>` : `<span class="text-brandGold">₹${data.courseDetails.total}</span> <span class="text-gray-400 font-normal">(Full)</span>`;
+
+                    html += `
+                        <div class="bg-white rounded-2xl shadow-lg border-2 ${isApproved ? 'border-green-400 shadow-green-100' : 'border-blue-100'} p-5 flex flex-col justify-between hover:-translate-y-1 transition duration-300">
+                            
+                            <div class="flex justify-between items-start mb-4 border-b border-gray-100 pb-3">
+                                <div>
+                                    <h3 class="font-black text-xl text-gray-800 leading-tight">${data.name}</h3>
+                                    <p class="text-[10px] text-gray-400 mt-1 font-bold uppercase"><i class="fa-solid fa-envelope mr-1"></i> ${data.email}</p>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm ${isApproved ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">
+                                    ${isApproved ? '<i class="fa-solid fa-check-double mr-1"></i> Approved' : '<i class="fa-solid fa-hourglass-half mr-1"></i> Pending'}
+                                </span>
+                            </div>
+                            
+                            <div class="bg-gray-50 rounded-xl p-4 mb-4 border border-gray-100 space-y-2">
+                                <div class="flex justify-between items-center border-b border-gray-200 pb-2">
+                                    <span class="text-[10px] font-bold text-gray-500 uppercase">Course</span>
+                                    <span class="text-sm font-black text-brandBlue">${data.course}</span>
+                                </div>
+                                <div class="flex justify-between items-center border-b border-gray-200 pb-2">
+                                    <span class="text-[10px] font-bold text-gray-500 uppercase">Mode & Duration</span>
+                                    <span class="text-xs font-bold text-gray-700">${data.feeType} | ${data.courseDetails.dur}</span>
+                                </div>
+                                <div class="flex justify-between items-center border-b border-gray-200 pb-2">
+                                    <span class="text-[10px] font-bold text-gray-500 uppercase">Adm. Fee</span>
+                                    <span class="text-xs font-bold text-green-600">₹${data.courseDetails.adm}</span>
+                                </div>
+                                <div class="flex justify-between items-center border-b border-gray-200 pb-2">
+                                    <span class="text-[10px] font-bold text-gray-500 uppercase">Fee details</span>
+                                    <span class="text-sm font-black">${feeAmountText}</span>
+                                </div>
+                                <div class="flex justify-between items-center pt-1">
+                                    <span class="text-[10px] font-bold text-gray-500 uppercase">Timing</span>
+                                    <span class="text-xs font-bold text-gray-700 text-right w-1/2">${data.timing}</span>
+                                </div>
+                            </div>
+
+                            <div class="mb-5 px-1">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase mb-1">Address / Village</p>
+                                <p class="text-xs font-medium text-gray-600 leading-tight">${data.address}, ${data.state} - ${data.pin}</p>
+                            </div>
+                            
+                            <div class="mt-auto border-t border-gray-100 pt-4 space-y-3">
+                                <a href="tel:${data.mobile}" class="w-full flex items-center justify-center gap-2 bg-blue-50 text-brandBlue hover:bg-blue-100 font-bold py-2.5 rounded-xl transition text-sm">
+                                    <i class="fa-solid fa-phone-volume"></i> Call ${data.mobile}
+                                </a>
+
+                                <div class="flex gap-2">
+                                    ${!isApproved ? 
+                                        `<button onclick="window.approveAdmission('${data.id}')" class="flex-1 bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-2.5 rounded-xl transition shadow-md"><i class="fa-solid fa-thumbs-up mr-1"></i> Approve</button>` 
+                                        : 
+                                        `<button disabled class="flex-1 bg-gray-100 text-gray-400 text-xs font-bold py-2.5 rounded-xl cursor-not-allowed"><i class="fa-solid fa-check"></i> Approved</button>`
+                                    }
+                                    <button onclick="window.deleteAdmission('${data.id}')" class="bg-red-50 hover:bg-red-500 text-red-500 hover:text-white text-xs font-bold px-4 py-2.5 rounded-xl transition"><i class="fa-solid fa-trash-can"></i></button>
+                                </div>
+                                <p class="text-[9px] text-gray-400 font-bold text-center mt-2"><i class="fa-regular fa-clock"></i> Applied on: ${formattedDate}</p>
+                            </div>
+
+                        </div>
+                    `;
+                });
+                grid.innerHTML = html;
+            } catch (e) { 
+                console.log(e); 
+                grid.innerHTML = '<div class="col-span-full text-center text-red-500 font-bold">Failed to load admissions. Check internet connection.</div>';
+            }
+        }
+
+        // Global Alert Function
+        function showAlert(msg, isSuccess) {
+            const alertBox = document.getElementById('admin-alert');
+            const alertMsg = document.getElementById('admin-alert-msg');
+            const alertIcon = document.getElementById('admin-alert-icon');
+            alertBox.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+            
+            if(isSuccess) {
+                alertBox.classList.add('bg-green-100', 'text-green-800'); alertIcon.className = "fa-solid fa-circle-check text-xl";
+            } else {
+                alertBox.classList.add('bg-red-100', 'text-red-800'); alertIcon.className = "fa-solid fa-triangle-exclamation text-xl";
+            }
+            alertMsg.innerText = msg;
+            setTimeout(() => { alertBox.classList.add('hidden'); }, 4000);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Approve Logic
+        window.approveAdmission = async (id) => {
+            if(confirm("Approve this admission? The student will see the Approved Status online.")) {
+                try {
+                    await setDoc(doc(db, "offline_admissions", id), { status: "Approved" }, { merge: true });
+                    showAlert("Admission Approved Successfully!", true);
+                    fetchAndRenderAdmissions(); // Refresh
+                } catch(e) { showAlert("Error approving admission.", false); }
+            }
+        };
+
+        // Delete Logic
+        window.deleteAdmission = async (id) => {
+            if(confirm("Are you sure you want to permanently delete this application?")) {
+                try {
+                    await deleteDoc(doc(db, "offline_admissions", id));
+                    showAlert("Application Deleted.", true);
+                    fetchAndRenderAdmissions(); // Refresh
+                } catch(e) { showAlert("Error deleting.", false); }
+            }
+        };
+
+        // Auto load on start
+        fetchAndRenderAdmissions();
+
+    </script>
+</body>
+</html>
