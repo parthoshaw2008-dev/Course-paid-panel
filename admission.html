@@ -38,14 +38,56 @@
         </div>
     </header>
 
+    <div id="approve-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden">
+        <div class="bg-white rounded-3xl shadow-2xl p-6 w-[90%] max-w-sm transform scale-95 transition-all duration-300">
+            <div class="text-center mb-4">
+                <div class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-xl mx-auto mb-2"><i class="fa-solid fa-user-check"></i></div>
+                <h3 class="text-lg font-bold text-gray-800">Approve Student</h3>
+                <p id="modal-student-name" class="text-xs font-bold text-brandBlue mt-1"></p>
+            </div>
+            
+            <input type="hidden" id="modal-student-id">
+            
+            <div class="space-y-4">
+                <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Assign Dashboard Username</label>
+                    <input type="text" id="assign-username" class="w-full bg-white border border-gray-200 p-2.5 rounded-lg text-sm font-bold text-gray-800 outline-none focus:border-brandBlue" placeholder="e.g. ST_Rahul2026">
+                </div>
+                <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
+                    <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Assign Dashboard Password</label>
+                    <input type="text" id="assign-password" class="w-full bg-white border border-gray-200 p-2.5 rounded-lg text-sm font-bold text-gray-800 outline-none focus:border-brandBlue" placeholder="e.g. Pass@123">
+                </div>
+            </div>
+
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeApproveModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-3 rounded-xl transition text-sm">Cancel</button>
+                <button onclick="confirmApproval()" id="btn-confirm-approve" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl shadow-lg transition text-sm flex justify-center items-center gap-2">
+                    <i class="fa-solid fa-check"></i> Approve
+                </button>
+            </div>
+        </div>
+    </div>
+
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-8">
         
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 border-b border-gray-200 pb-4">
-            <div>
-                <h2 class="text-2xl font-bold text-gray-800">Student Applications</h2>
-                <p class="text-sm text-gray-500 mt-1">Review, Call, and Approve Offline Admissions.</p>
+        <div class="grid grid-cols-3 gap-3 sm:gap-6 mb-8">
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-blue-100 text-center flex flex-col justify-center">
+                <p class="text-[10px] sm:text-xs text-blue-500 font-bold uppercase tracking-wider mb-1">Total Admissions</p>
+                <h3 class="text-2xl sm:text-4xl font-black text-brandBlue" id="stat-total">0</h3>
             </div>
-            <button onclick="fetchAndRenderAdmissions()" class="bg-brandBlue text-white text-sm font-bold px-4 py-2 rounded-lg shadow-sm hover:bg-blue-800 transition flex items-center gap-2">
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-amber-100 text-center flex flex-col justify-center">
+                <p class="text-[10px] sm:text-xs text-amber-500 font-bold uppercase tracking-wider mb-1">Pending Approval</p>
+                <h3 class="text-2xl sm:text-4xl font-black text-amber-600" id="stat-pending">0</h3>
+            </div>
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-green-100 text-center flex flex-col justify-center">
+                <p class="text-[10px] sm:text-xs text-green-500 font-bold uppercase tracking-wider mb-1">Approved</p>
+                <h3 class="text-2xl sm:text-4xl font-black text-green-600" id="stat-approved">0</h3>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center mb-6 border-b border-gray-200 pb-4">
+            <h2 class="text-xl font-bold text-gray-800">Student Applications</h2>
+            <button onclick="fetchAndRenderAdmissions()" class="bg-brandBlue text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm hover:bg-blue-800 transition flex items-center gap-2">
                 <i class="fa-solid fa-rotate-right"></i> Refresh
             </button>
         </div>
@@ -73,32 +115,62 @@
 
         // Authentication Check
         onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                alert("Unauthorized Access. Redirecting to Login...");
-                window.location.href = "login.html";
-            }
+            if (!user) { alert("Unauthorized Access."); window.location.href = "login.html"; }
         });
 
         document.getElementById('admin-logout-btn').addEventListener('click', () => {
             signOut(auth).then(() => window.location.href = "login.html");
         });
 
+        // Global Alert
+        function showAlert(msg, isSuccess) {
+            const alertBox = document.getElementById('admin-alert');
+            const alertMsg = document.getElementById('admin-alert-msg');
+            const alertIcon = document.getElementById('admin-alert-icon');
+            alertBox.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+            
+            if(isSuccess) {
+                alertBox.classList.add('bg-green-100', 'text-green-800'); alertIcon.className = "fa-solid fa-circle-check text-xl";
+            } else {
+                alertBox.classList.add('bg-red-100', 'text-red-800'); alertIcon.className = "fa-solid fa-triangle-exclamation text-xl";
+            }
+            alertMsg.innerText = msg;
+            setTimeout(() => { alertBox.classList.add('hidden'); }, 4000);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         // Fetch & Render Admissions
         window.fetchAndRenderAdmissions = async function() {
             const grid = document.getElementById('admissions-grid');
-            grid.innerHTML = `<div class="col-span-full flex flex-col items-center justify-center py-20 text-gray-400"><i class="fa-solid fa-spinner fa-spin text-4xl mb-3 text-brandBlue"></i><p class="text-sm font-bold uppercase">Refreshing...</p></div>`;
             
             try {
                 const snap = await getDocs(collection(db, "offline_admissions"));
+                
                 if(snap.empty) {
+                    document.getElementById('stat-total').textContent = "0";
+                    document.getElementById('stat-pending').textContent = "0";
+                    document.getElementById('stat-approved').textContent = "0";
                     grid.innerHTML = '<div class="col-span-full text-center py-10 bg-white rounded-2xl border border-dashed border-gray-300 text-gray-500 font-bold"><i class="fa-regular fa-folder-open text-3xl mb-2 block"></i> No admissions found.</div>';
                     return;
                 }
 
                 let html = '';
+                let countTotal = 0, countPending = 0, countApproved = 0;
                 const admissions = [];
-                snap.forEach(d => admissions.push({ id: d.id, ...d.data() }));
                 
+                snap.forEach(d => {
+                    const data = d.data();
+                    admissions.push({ id: d.id, ...data });
+                    countTotal++;
+                    if(data.status === "Approved") countApproved++;
+                    else countPending++;
+                });
+                
+                // Update Dashboard Stats
+                document.getElementById('stat-total').textContent = countTotal;
+                document.getElementById('stat-pending').textContent = countPending;
+                document.getElementById('stat-approved').textContent = countApproved;
+
                 // Sort by date (Newest first)
                 admissions.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
 
@@ -107,7 +179,6 @@
                     const dateObj = new Date(data.submittedAt);
                     const formattedDate = dateObj.toLocaleDateString('en-IN') + ' ' + dateObj.toLocaleTimeString('en-IN', {hour: '2-digit', minute:'2-digit'});
                     
-                    // Fee text logic based on Monthly or Yearly
                     const feeAmountText = data.feeType === 'Monthly' ? `<span class="text-orange-500">₹${data.courseDetails.mon}</span> <span class="text-gray-400 font-normal">/ month</span>` : `<span class="text-brandGold">₹${data.courseDetails.total}</span> <span class="text-gray-400 font-normal">(Full)</span>`;
 
                     html += `
@@ -146,11 +217,16 @@
                                 </div>
                             </div>
 
-                            <div class="mb-5 px-1">
-                                <p class="text-[10px] font-bold text-gray-400 uppercase mb-1">Address / Village</p>
-                                <p class="text-xs font-medium text-gray-600 leading-tight">${data.address}, ${data.state} - ${data.pin}</p>
-                            </div>
-                            
+                            ${isApproved && data.dashboardUser ? `
+                            <div class="bg-green-50 border border-green-200 rounded-xl p-3 mb-4 flex justify-between items-center">
+                                <div>
+                                    <p class="text-[9px] text-green-600 font-bold uppercase tracking-wider mb-1">Assigned Credentials</p>
+                                    <p class="text-xs font-bold text-gray-800"><span class="text-gray-500 font-medium">User:</span> ${data.dashboardUser}</p>
+                                    <p class="text-xs font-bold text-gray-800"><span class="text-gray-500 font-medium">Pass:</span> ${data.dashboardPass}</p>
+                                </div>
+                                <i class="fa-solid fa-key text-green-300 text-2xl"></i>
+                            </div>` : ''}
+
                             <div class="mt-auto border-t border-gray-100 pt-4 space-y-3">
                                 <a href="tel:${data.mobile}" class="w-full flex items-center justify-center gap-2 bg-blue-50 text-brandBlue hover:bg-blue-100 font-bold py-2.5 rounded-xl transition text-sm">
                                     <i class="fa-solid fa-phone-volume"></i> Call ${data.mobile}
@@ -158,7 +234,7 @@
 
                                 <div class="flex gap-2">
                                     ${!isApproved ? 
-                                        `<button onclick="window.approveAdmission('${data.id}')" class="flex-1 bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-2.5 rounded-xl transition shadow-md"><i class="fa-solid fa-thumbs-up mr-1"></i> Approve</button>` 
+                                        `<button onclick="window.openApproveModal('${data.id}', '${data.name}', '${data.mobile}')" class="flex-1 bg-green-500 hover:bg-green-600 text-white text-xs font-bold py-2.5 rounded-xl transition shadow-md"><i class="fa-solid fa-thumbs-up mr-1"></i> Approve</button>` 
                                         : 
                                         `<button disabled class="flex-1 bg-gray-100 text-gray-400 text-xs font-bold py-2.5 rounded-xl cursor-not-allowed"><i class="fa-solid fa-check"></i> Approved</button>`
                                     }
@@ -177,31 +253,54 @@
             }
         }
 
-        // Global Alert Function
-        function showAlert(msg, isSuccess) {
-            const alertBox = document.getElementById('admin-alert');
-            const alertMsg = document.getElementById('admin-alert-msg');
-            const alertIcon = document.getElementById('admin-alert-icon');
-            alertBox.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+        // Modal Logic
+        const approveModal = document.getElementById('approve-modal');
+        
+        window.openApproveModal = function(id, name, phone) {
+            document.getElementById('modal-student-id').value = id;
+            document.getElementById('modal-student-name').textContent = `Student: ${name}`;
             
-            if(isSuccess) {
-                alertBox.classList.add('bg-green-100', 'text-green-800'); alertIcon.className = "fa-solid fa-circle-check text-xl";
-            } else {
-                alertBox.classList.add('bg-red-100', 'text-red-800'); alertIcon.className = "fa-solid fa-triangle-exclamation text-xl";
-            }
-            alertMsg.innerText = msg;
-            setTimeout(() => { alertBox.classList.add('hidden'); }, 4000);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+            // Auto-generate a suggestion for username
+            const shortName = name.split(' ')[0].substring(0,4);
+            document.getElementById('assign-username').value = `ST_${shortName}${phone.substring(6)}`;
+            document.getElementById('assign-password').value = `Pass@123`;
+            
+            approveModal.classList.remove('hidden');
+        };
 
-        // Approve Logic
-        window.approveAdmission = async (id) => {
-            if(confirm("Approve this admission? The student will see the Approved Status online.")) {
-                try {
-                    await setDoc(doc(db, "offline_admissions", id), { status: "Approved" }, { merge: true });
-                    showAlert("Admission Approved Successfully!", true);
-                    fetchAndRenderAdmissions(); // Refresh
-                } catch(e) { showAlert("Error approving admission.", false); }
+        window.closeApproveModal = function() {
+            approveModal.classList.add('hidden');
+        };
+
+        // Confirm Approve & Assign
+        window.confirmApproval = async function() {
+            const id = document.getElementById('modal-student-id').value;
+            const user = document.getElementById('assign-username').value.trim();
+            const pass = document.getElementById('assign-password').value.trim();
+            const btn = document.getElementById('btn-confirm-approve');
+
+            if(!user || !pass) {
+                alert("Please assign both Username and Password."); return;
+            }
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Approving...';
+            btn.disabled = true;
+
+            try {
+                await setDoc(doc(db, "offline_admissions", id), { 
+                    status: "Approved",
+                    dashboardUser: user,
+                    dashboardPass: pass
+                }, { merge: true });
+                
+                closeApproveModal();
+                showAlert("Admission Approved & Credentials Assigned!", true);
+                fetchAndRenderAdmissions(); // Refresh list to update stats
+            } catch(e) { 
+                showAlert("Error approving admission.", false); 
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Approve';
+                btn.disabled = false;
             }
         };
 
